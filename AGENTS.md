@@ -12,3 +12,5 @@
 ## Application structure
 - Keep illustrative election data and geographic geometry in browser-safe data modules separate from reusable presentation components, so a future data provider can replace the fixtures without redesigning the interface.
 - Use local static state geometry and SVG for the interactive Brazil map to avoid remote map dependencies and keep the initial page lightweight.
+- Screens read results only through src/lib/elections (types + ElectionResultsProvider); fixtures live behind demo-provider, so an official source swaps in without touching components.
+- Every snapshot carries a source kind (simulated/official); comparisons refuse to mix kinds so fictional data never blends with official results.
