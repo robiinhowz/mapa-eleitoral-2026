@@ -1451,35 +1451,24 @@ h1 {
   .advert-area {
     grid-template-columns: 1fr auto;
   }
-  .premium-panel {
-    grid-template-columns: 40px minmax(0, 1fr);
-    padding: 20px 13px;
-    gap: 15px;
-  }
-  .premium-art {
-    width: 39px;
-    height: 39px;
-  }
-  .premium-art > svg {
-    width: 23px;
-  }
-  .premium-copy h2 {
-    font-size: 15px;
-  }
   .premium-eyebrow {
     font-size: 7px;
     gap: 4px;
   }
-  .premium-action {
-    grid-column: 1/-1;
-    margin-top: 4px;
+  .premium-card-strip {
+    width: 4px;
   }
-  .premium-action strong {
-    font-size: 24px;
+  .premium-card-foot {
+    flex-wrap: wrap;
+    gap: 10px;
   }
-  .premium-action a {
-    font-size: 10px;
+  .premium-card-cta {
+    font-size: 9px;
     padding: 0 12px;
+  }
+  .premium-card-note {
+    font-size: 7px;
+    line-height: 1.6;
   }
   .site-footer > div {
     padding: 22px 16px;
