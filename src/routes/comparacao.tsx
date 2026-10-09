@@ -74,7 +74,10 @@ function Comparison() {
               <LockKeyhole />
             </span>
             <h2>Mais contexto para cada escolha.</h2>
-            <p>Compare a evolução da votação por estado e região.</p>
+            <p>
+              Compare os turnos de 2026 e o 2º turno de 2022, com diferenças de votos e pontos
+              percentuais por região.
+            </p>
             <Button disabled>
               <ChartNoAxesCombined />
               Premium em breve · R$ 5
