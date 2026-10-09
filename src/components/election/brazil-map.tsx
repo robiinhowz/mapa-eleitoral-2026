@@ -1,0 +1,114 @@
+import { useState } from "react";
+import { Minus, Plus, RotateCcw, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { brazilStates } from "@/lib/brazil-geometry";
+import { stateInfo, regionClass, regions, type Region } from "@/lib/election-demo";
+export function BrazilMap({
+  region,
+  state,
+  onSelect,
+}: {
+  region: Region | null;
+  state: string | null;
+  onSelect: (code: string | null) => void;
+}) {
+  const [zoom, setZoom] = useState(1);
+  const [hover, setHover] = useState<string | null>(null);
+  return (
+    <div className="map-wrap">
+      <div className="map-controls">
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Ampliar mapa"
+          title="Ampliar mapa"
+          disabled={zoom >= 1.6}
+          onClick={() => setZoom((z) => Math.min(1.6, z + 0.2))}
+        >
+          <Plus />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Reduzir mapa"
+          title="Reduzir mapa"
+          disabled={zoom <= 1}
+          onClick={() => setZoom((z) => Math.max(1, z - 0.2))}
+        >
+          <Minus />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Restaurar mapa"
+          title="Restaurar mapa"
+          onClick={() => {
+            setZoom(1);
+            onSelect(null);
+          }}
+        >
+          <RotateCcw />
+        </Button>
+      </div>
+      <div className="map-canvas">
+        <svg viewBox="-12 -5 525 505" aria-label="Mapa interativo dos estados do Brasil">
+          <g transform={`translate(${250 * (1 - zoom)},${250 * (1 - zoom)}) scale(${zoom})`}>
+            {brazilStates.map((s) => {
+              const info = stateInfo[s.code];
+              if (!info) return null;
+              return (
+                <g
+                  key={s.code}
+                  className={`${regionClass[info.region]} state-group ${region && region !== info.region ? "state-dim" : ""} ${state === s.code ? "state-selected" : ""}`}
+                >
+                  <path
+                    d={s.path}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Selecionar ${info.name}`}
+                    aria-pressed={state === s.code}
+                    onClick={() => onSelect(state === s.code ? null : s.code)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        onSelect(state === s.code ? null : s.code);
+                      }
+                    }}
+                    onMouseEnter={() => setHover(s.code)}
+                    onMouseLeave={() => setHover(null)}
+                    onFocus={() => setHover(s.code)}
+                    onBlur={() => setHover(null)}
+                  >
+                    <title>{`${info.name} · ${info.region}`}</title>
+                  </path>
+                  <text x={s.x} y={s.y} dy=".3em" textAnchor="middle">
+                    {s.code}
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+        </svg>
+      </div>
+      <div className="map-caption">
+        <span>
+          <MapPin size={14} />
+          {hover
+            ? stateInfo[hover]?.name
+            : state
+              ? stateInfo[state]?.name
+              : "27 unidades federativas"}
+        </span>
+        <span>Distribuição por região</span>
+      </div>
+      <div className="map-legend">
+        {regions.map((r) => (
+          <span key={r}>
+            <i className={`region-dot ${regionClass[r]}`} />
+            {r}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}

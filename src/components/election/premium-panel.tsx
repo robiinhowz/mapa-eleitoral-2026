@@ -1,0 +1,34 @@
+import { Link } from "@tanstack/react-router";
+import { ArrowUpRight, ChartNoAxesCombined, LockKeyhole } from "lucide-react";
+import { Button } from "@/components/ui/button";
+export function PremiumPanel() {
+  return (
+    <section className="premium-panel">
+      <div className="premium-art" aria-hidden="true">
+        <ChartNoAxesCombined />
+        <span>
+          <LockKeyhole size={15} />
+        </span>
+      </div>
+      <div className="premium-copy">
+        <span className="premium-eyebrow">
+          UM OLHAR ALÉM DE 2026 <span className="premium-tag">PREMIUM</span>
+        </span>
+        <h2>O que mudou de uma eleição para outra?</h2>
+        <p>Comparação histórica entre estados e regiões.</p>
+        <small>Prévia visual · acesso ainda indisponível</small>
+      </div>
+      <div className="premium-action">
+        <span>
+          por <strong>R$ 5</strong>
+          <small>pagamento único</small>
+        </span>
+        <Button asChild>
+          <Link to="/comparacao">
+            Explorar comparação <ArrowUpRight />
+          </Link>
+        </Button>
+      </div>
+    </section>
+  );
+}

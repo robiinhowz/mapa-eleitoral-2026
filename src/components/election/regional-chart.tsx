@@ -1,0 +1,69 @@
+import { ArrowUpRight } from "lucide-react";
+import {
+  regions,
+  regionalShares,
+  candidates,
+  formatPercent,
+  type Region,
+} from "@/lib/election-demo";
+import { Button } from "@/components/ui/button";
+export function RegionalChart({
+  region,
+  onSelect,
+}: {
+  region: Region | null;
+  onSelect: (r: Region) => void;
+}) {
+  return (
+    <section className="regional-section">
+      <div className="section-heading">
+        <div>
+          <h2>O voto em cada região</h2>
+          <p>Distribuição dos votos válidos · cenário fictício</p>
+        </div>
+        <span className="subtle-label">COMPARATIVO REGIONAL</span>
+      </div>
+      <div className="chart-legend">
+        {candidates.map((c) => (
+          <span key={c.id}>
+            <i className={`candidate-dot ${c.className}`} />
+            {c.name}
+          </span>
+        ))}
+      </div>
+      <div className="regional-chart">
+        {regions.map((r) => (
+          <div className={`chart-row ${region === r ? "chart-selected" : ""}`} key={r}>
+            <Button variant="ghost" className="chart-label" onClick={() => onSelect(r)}>
+              {r}
+              <ArrowUpRight size={13} />
+            </Button>
+            <div
+              className="stacked-bar"
+              role="img"
+              aria-label={`${r}: ${candidates.map((c, i) => `${c.name} ${formatPercent(regionalShares[r][i] ?? c.percent)}%`).join(", ")}`}
+            >
+              {regionalShares[r].map((p, i) => (
+                <span
+                  key={i}
+                  className={candidates[i]?.className}
+                  style={{ width: `${p}%` }}
+                  title={`${candidates[i]?.name}: ${formatPercent(p)}%`}
+                >
+                  {p > 15 ? `${p.toLocaleString("pt-BR")}%` : null}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="chart-axis">
+        <span>0%</span>
+        <span>25%</span>
+        <span>50%</span>
+        <span>75%</span>
+        <span>100%</span>
+      </div>
+    </section>
+  );
+}
