@@ -1,12 +1,8 @@
-export type Region = "Norte" | "Nordeste" | "Centro-Oeste" | "Sudeste" | "Sul";
-export const regions: Region[] = ["Norte", "Nordeste", "Centro-Oeste", "Sudeste", "Sul"];
-export const regionClass: Record<Region, string> = {
-  Norte: "region-north",
-  Nordeste: "region-northeast",
-  "Centro-Oeste": "region-central",
-  Sudeste: "region-southeast",
-  Sul: "region-south",
-};
+// DADOS SIMULADOS — apenas demonstração visual. Nunca misturar com resultados oficiais.
+// Acesse estes dados pela camada src/lib/elections (demo-provider), não diretamente nas telas.
+import type { Region } from "./elections/types";
+export type { Region };
+export { regions, regionClass } from "./elections/geography";
 export const stateInfo: Record<string, { name: string; region: Region; weight: number }> = {
   AC: { name: "Acre", region: "Norte", weight: 0.004 },
   AL: { name: "Alagoas", region: "Nordeste", weight: 0.016 },

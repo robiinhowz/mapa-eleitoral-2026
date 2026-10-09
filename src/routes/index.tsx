@@ -6,7 +6,8 @@ import { BrazilMap } from "@/components/election/brazil-map";
 import { CandidateCard } from "@/components/election/candidate-card";
 import { RegionFilter } from "@/components/election/region-filter";
 import { PremiumRegionCard } from "@/components/election/premium-region-card";
-import { getResults, formatNumber, stateInfo, type Region } from "@/lib/election-demo";
+import { formatNumber, stateInfo } from "@/lib/election-demo";
+import { getResultsView, toScope, type Region } from "@/lib/elections";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [region, setRegion] = useState<Region | null>(null);
   const [state, setState] = useState<string | null>(null);
-  const result = getResults(region, state);
+  const result = getResultsView(toScope(region, state));
   function selectRegion(r: Region | null) {
     setRegion(r);
     setState(null);
