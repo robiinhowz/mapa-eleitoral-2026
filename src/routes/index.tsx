@@ -5,8 +5,7 @@ import { PageShell } from "@/components/election/page-shell";
 import { BrazilMap } from "@/components/election/brazil-map";
 import { CandidateCard } from "@/components/election/candidate-card";
 import { RegionFilter } from "@/components/election/region-filter";
-import { RegionalChart } from "@/components/election/regional-chart";
-import { PremiumPanel } from "@/components/election/premium-panel";
+import { PremiumRegionCard } from "@/components/election/premium-region-card";
 import { getResults, formatNumber, stateInfo, type Region } from "@/lib/election-demo";
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -168,7 +167,7 @@ function Index() {
         </section>
       </div>
       <div className="lower-grid">
-        <RegionalChart region={region} onSelect={selectRegion} />
+        <PremiumRegionCard />
         <aside className="advert-area" aria-label="Espaço reservado para publicidade">
           <span>PUBLICIDADE</span>
           <div>
@@ -183,7 +182,6 @@ function Index() {
           <span>FORMATO DISCRETO</span>
         </aside>
       </div>
-      <PremiumPanel />
     </PageShell>
   );
 }
