@@ -24,7 +24,7 @@ export function getDemoSnapshot(scope: GeoScope): ResultSnapshot {
     source,
     candidates: candidates.map((c) => {
       const [partyName, number] = c.party.split(" · ");
-      return { id: c.id, name: c.name, number: Number(number), party: { name: partyName } };
+      return { id: c.id, name: c.name, number: Number(number), party: { name: partyName ?? c.party } };
     }),
     results: r.candidates.map((c) => ({ candidateId: c.id, votes: c.votes, percent: c.percent })),
     progress: {

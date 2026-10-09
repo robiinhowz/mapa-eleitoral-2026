@@ -52,7 +52,7 @@ export interface CountingProgress {
   /** Percentual de urnas apuradas (0–100), quando disponível. */
   pollsCountedPercent?: number;
   /** ISO 8601 da última atualização informada pela fonte. */
-  updatedAt?: string;
+  updatedAt?: string | undefined;
 }
 
 export interface ResultSnapshot {
@@ -67,12 +67,12 @@ export interface ResultSnapshot {
 /** Comparação de um candidato entre dois snapshots (mesma abrangência). */
 export interface CandidateDelta {
   candidateId: string;
-  before?: CandidateVotes;
-  after?: CandidateVotes;
+  before?: CandidateVotes | undefined;
+  after?: CandidateVotes | undefined;
   /** Diferença absoluta de votos (after - before). */
-  voteDiff?: number;
+  voteDiff?: number | undefined;
   /** Variação em pontos percentuais (after - before). */
-  percentPointDiff?: number;
+  percentPointDiff?: number | undefined;
 }
 
 export interface ResultComparison {
