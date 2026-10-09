@@ -167,7 +167,7 @@ function Index() {
         </section>
       </div>
       <div className="lower-grid">
-        <RegionalChart region={region} onSelect={selectRegion} />
+        <PremiumRegionCard />
         <aside className="advert-area" aria-label="Espaço reservado para publicidade">
           <span>PUBLICIDADE</span>
           <div>
@@ -182,7 +182,6 @@ function Index() {
           <span>FORMATO DISCRETO</span>
         </aside>
       </div>
-      <PremiumPanel />
     </PageShell>
   );
 }
