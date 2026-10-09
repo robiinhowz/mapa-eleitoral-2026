@@ -1,9 +1,88 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
-import { LockKeyhole, ChartNoAxesCombined } from 'lucide-react';
-import { PageShell } from '@/components/election/page-shell';
-import { RegionFilter } from '@/components/election/region-filter';
-import { Button } from '@/components/ui/button';
-import type { Region } from '@/lib/election-demo';
-export const Route=createFileRoute('/comparacao')({head:()=>({meta:[{title:'Comparação histórica Premium — Mapa Eleitoral'},{name:'description',content:'Prévia visual da comparação histórica Premium por R$ 5. Sem pagamentos ou resultados históricos reais.'},{property:'og:title',content:'Comparação histórica — Mapa Eleitoral'},{property:'og:description',content:'Prévia demonstrativa do recurso Premium. Acesso e pagamentos ainda indisponíveis.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:Comparison});
-function Comparison(){const [region,setRegion]=useState<Region|null>(null);const [period,setPeriod]=useState('2022 × 2026');return <PageShell><div className="page-title-row"><div><div className="eyebrow">PERSPECTIVA HISTÓRICA <span className="premium-tag">PREMIUM</span></div><h1>O Brasil entre duas eleições.</h1><p>Uma prévia da comparação histórica · dados fictícios</p></div><span className="price-display">R$ 5<small>pagamento único</small></span></div><RegionFilter value={region} onChange={setRegion}/><section className="history-section"><div className="section-heading"><div><h2>{region??'Brasil'} · comparação histórica</h2><p>Prévia ilustrativa, sem dados de eleições reais.</p></div><select aria-label="Períodos da comparação" value={period} onChange={e=>setPeriod(e.target.value)}><option>2022 × 2026</option><option>2018 × 2026</option></select></div><div className="history-preview" aria-label="Visualização conceitual bloqueada"><div className="history-bars" aria-hidden="true">{[42,65,52,77,58,88,64,79,47,60].map((h,i)=><i key={i} className={i%2?'candidate-a':'candidate-b'} style={{height:`${h}%`}}/>)}</div><div className="history-lock"><span className="lock-icon"><LockKeyhole/></span><h2>Mais contexto para cada escolha.</h2><p>Compare a evolução da votação por estado e região.</p><Button disabled><ChartNoAxesCombined/>Premium em breve · R$ 5</Button><small>Recurso apenas visual. Não há cobrança nem acesso pago nesta etapa.</small></div></div></section></PageShell>}
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { LockKeyhole, ChartNoAxesCombined } from "lucide-react";
+import { PageShell } from "@/components/election/page-shell";
+import { RegionFilter } from "@/components/election/region-filter";
+import { Button } from "@/components/ui/button";
+import type { Region } from "@/lib/election-demo";
+export const Route = createFileRoute("/comparacao")({
+  head: () => ({
+    meta: [
+      { title: "Comparação histórica Premium — Mapa Eleitoral" },
+      {
+        name: "description",
+        content:
+          "Prévia visual da comparação histórica Premium por R$ 5. Sem pagamentos ou resultados históricos reais.",
+      },
+      { property: "og:title", content: "Comparação histórica — Mapa Eleitoral" },
+      {
+        property: "og:description",
+        content:
+          "Prévia demonstrativa do recurso Premium. Acesso e pagamentos ainda indisponíveis.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: Comparison,
+});
+function Comparison() {
+  const [region, setRegion] = useState<Region | null>(null);
+  const [period, setPeriod] = useState("2022 × 2026");
+  return (
+    <PageShell>
+      <div className="page-title-row">
+        <div>
+          <div className="eyebrow">
+            PERSPECTIVA HISTÓRICA <span className="premium-tag">PREMIUM</span>
+          </div>
+          <h1>O Brasil entre duas eleições.</h1>
+          <p>Uma prévia da comparação histórica · dados fictícios</p>
+        </div>
+        <span className="price-display">
+          R$ 5<small>pagamento único</small>
+        </span>
+      </div>
+      <RegionFilter value={region} onChange={setRegion} />
+      <section className="history-section">
+        <div className="section-heading">
+          <div>
+            <h2>{region ?? "Brasil"} · comparação histórica</h2>
+            <p>Prévia ilustrativa, sem dados de eleições reais.</p>
+          </div>
+          <select
+            aria-label="Períodos da comparação"
+            value={period}
+            onChange={(e) => setPeriod(e.target.value)}
+          >
+            <option>2022 × 2026</option>
+            <option>2018 × 2026</option>
+          </select>
+        </div>
+        <div className="history-preview" aria-label="Visualização conceitual bloqueada">
+          <div className="history-bars" aria-hidden="true">
+            {[42, 65, 52, 77, 58, 88, 64, 79, 47, 60].map((h, i) => (
+              <i
+                key={i}
+                className={i % 2 ? "candidate-a" : "candidate-b"}
+                style={{ height: `${h}%` }}
+              />
+            ))}
+          </div>
+          <div className="history-lock">
+            <span className="lock-icon">
+              <LockKeyhole />
+            </span>
+            <h2>Mais contexto para cada escolha.</h2>
+            <p>Compare a evolução da votação por estado e região.</p>
+            <Button disabled>
+              <ChartNoAxesCombined />
+              Premium em breve · R$ 5
+            </Button>
+            <small>Recurso apenas visual. Não há cobrança nem acesso pago nesta etapa.</small>
+          </div>
+        </div>
+      </section>
+    </PageShell>
+  );
+}

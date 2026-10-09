@@ -1,5 +1,78 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { ShieldCheck, Info, Map, LockKeyhole } from 'lucide-react';
-import { PageShell } from '@/components/election/page-shell';
-export const Route=createFileRoute('/sobre')({head:()=>({meta:[{title:'Sobre e transparência — Mapa Eleitoral'},{name:'description',content:'Conheça o projeto independente Mapa Eleitoral e os limites desta demonstração visual, sem vínculo com o TSE.'},{property:'og:title',content:'Sobre o projeto — Mapa Eleitoral'},{property:'og:description',content:'Transparência sobre os dados fictícios, independência e recursos demonstrativos do projeto.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:About});
-function About(){return <PageShell><div className="page-title-row"><div><div className="eyebrow">SOBRE O PROJETO</div><h1>Transparência em primeiro lugar.</h1><p>Mapa Eleitoral é uma ferramenta independente em desenvolvimento.</p></div><ShieldCheck size={40} className="text-primary"/></div><div className="about-content"><section><Info/><h2>Uma demonstração, não uma apuração</h2><p>Todos os números, candidatos, partidos, retratos e horários exibidos são fictícios. Não representam o resultado das eleições presidenciais de 2026 ou de eleições anteriores. Os valores não são atualizados automaticamente.</p></section><section><ShieldCheck/><h2>Independente e sem vínculo oficial</h2><p>O Mapa Eleitoral não tem vínculo com o Tribunal Superior Eleitoral (TSE). Não há conexão com serviços oficiais nesta demonstração.</p></section><section><Map/><h2>Geografia e apresentação dos dados</h2><p>Os contornos representam os 26 estados e o Distrito Federal. As cores do mapa identificam as cinco regiões brasileiras, não indicam vencedores. Os filtros exibem recortes de um cenário inteiramente fictício.</p><p className="text-sm">Contornos geográficos derivados do IBGE, disponibilizados por afialho/geojson sob CC0 1.0.</p></section><section><LockKeyhole/><h2>Comparação histórica Premium</h2><p>O valor previsto é R$ 5, em pagamento único. O recurso é apenas uma prévia visual: não há pagamento, autenticação ou liberação de acesso nesta etapa.</p></section></div></PageShell>}
+import { createFileRoute } from "@tanstack/react-router";
+import { ShieldCheck, Info, Map, LockKeyhole } from "lucide-react";
+import { PageShell } from "@/components/election/page-shell";
+export const Route = createFileRoute("/sobre")({
+  head: () => ({
+    meta: [
+      { title: "Sobre e transparência — Mapa Eleitoral" },
+      {
+        name: "description",
+        content:
+          "Conheça o projeto independente Mapa Eleitoral e os limites desta demonstração visual, sem vínculo com o TSE.",
+      },
+      { property: "og:title", content: "Sobre o projeto — Mapa Eleitoral" },
+      {
+        property: "og:description",
+        content:
+          "Transparência sobre os dados fictícios, independência e recursos demonstrativos do projeto.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: About,
+});
+function About() {
+  return (
+    <PageShell>
+      <div className="page-title-row">
+        <div>
+          <div className="eyebrow">SOBRE O PROJETO</div>
+          <h1>Transparência em primeiro lugar.</h1>
+          <p>Mapa Eleitoral é uma ferramenta independente em desenvolvimento.</p>
+        </div>
+        <ShieldCheck size={40} className="text-primary" />
+      </div>
+      <div className="about-content">
+        <section>
+          <Info />
+          <h2>Uma demonstração, não uma apuração</h2>
+          <p>
+            Todos os números, candidatos, partidos, retratos e horários exibidos são fictícios. Não
+            representam o resultado das eleições presidenciais de 2026 ou de eleições anteriores. Os
+            valores não são atualizados automaticamente.
+          </p>
+        </section>
+        <section>
+          <ShieldCheck />
+          <h2>Independente e sem vínculo oficial</h2>
+          <p>
+            O Mapa Eleitoral não tem vínculo com o Tribunal Superior Eleitoral (TSE). Não há conexão
+            com serviços oficiais nesta demonstração.
+          </p>
+        </section>
+        <section>
+          <Map />
+          <h2>Geografia e apresentação dos dados</h2>
+          <p>
+            Os contornos representam os 26 estados e o Distrito Federal. As cores do mapa
+            identificam as cinco regiões brasileiras, não indicam vencedores. Os filtros exibem
+            recortes de um cenário inteiramente fictício.
+          </p>
+          <p className="text-sm">
+            Contornos geográficos derivados do IBGE, disponibilizados por afialho/geojson sob CC0
+            1.0.
+          </p>
+        </section>
+        <section>
+          <LockKeyhole />
+          <h2>Comparação histórica Premium</h2>
+          <p>
+            O valor previsto é R$ 5, em pagamento único. O recurso é apenas uma prévia visual: não
+            há pagamento, autenticação ou liberação de acesso nesta etapa.
+          </p>
+        </section>
+      </div>
+    </PageShell>
+  );
+}

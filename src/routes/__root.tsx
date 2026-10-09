@@ -80,15 +80,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Mapa Eleitoral" },
       { name: "description", content: "Ferramenta eleitoral independente — demonstração visual" },
-      
+
       { property: "og:title", content: "Mapa Eleitoral" },
-      { property: "og:description", content: "Ferramenta eleitoral independente — demonstração visual" },
+      {
+        property: "og:description",
+        content: "Ferramenta eleitoral independente — demonstração visual",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      
     ],
     links: [
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
