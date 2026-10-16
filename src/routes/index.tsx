@@ -1,13 +1,37 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowDown, CheckCheck, Clock3, Info, Vote, Globe2, ChevronRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  AlertTriangle,
+  ArrowDown,
+  CheckCheck,
+  Clock3,
+  Info,
+  Loader2,
+  RefreshCw,
+  Vote,
+  Globe2,
+  ChevronRight,
+  Inbox,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { PageShell } from "@/components/election/page-shell";
 import { BrazilMap } from "@/components/election/brazil-map";
 import { CandidateCard } from "@/components/election/candidate-card";
 import { RegionFilter } from "@/components/election/region-filter";
 import { PremiumRegionCard } from "@/components/election/premium-region-card";
-import { formatNumber, stateInfo } from "@/lib/election-demo";
-import { getResultsView, toScope, type Region } from "@/lib/elections";
+import { formatNumber, formatPercent } from "@/lib/election-demo";
+import {
+  activeSourceKey,
+  availableElections,
+  getResultsView,
+  scopeLabel,
+  states,
+  toScope,
+  TseUnavailableError,
+  type Region,
+  type Round,
+} from "@/lib/elections";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -15,13 +39,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Explore uma demonstração independente dos resultados presidenciais de 2026 por estado e região. Todos os dados são fictícios.",
+          "Explore os resultados presidenciais de 2026 por estado e região, a partir dos arquivos públicos do TSE. Projeto independente.",
       },
       { property: "og:title", content: "Mapa Eleitoral — Eleições 2026" },
       {
         property: "og:description",
-        content:
-          "Mapa interativo do Brasil e comparações regionais em uma demonstração visual com dados fictícios.",
+        content: "Mapa interativo do Brasil com os resultados presidenciais de 2026 por estado e região.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -29,10 +52,34 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
+
+function formatUpdated(iso: string) {
+  return new Date(iso).toLocaleString("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 function Index() {
   const [region, setRegion] = useState<Region | null>(null);
   const [state, setState] = useState<string | null>(null);
-  const result = getResultsView(toScope(region, state));
+  const elections = availableElections[activeSourceKey];
+  const [round, setRound] = useState<Round>(elections[0]!.round);
+  const election = elections.find((e) => e.round === round) ?? elections[0]!;
+  const scope = toScope(region, state);
+  const simulated = activeSourceKey === "demo";
+  const query = useQuery({
+    queryKey: ["results", activeSourceKey, election.year, election.round, scope],
+    queryFn: () => getResultsView(election, scope),
+    retry: 1,
+    staleTime: 60_000,
+  });
+  const result = query.data ?? null;
+  const label = scopeLabel(scope);
+
   function selectRegion(r: Region | null) {
     setRegion(r);
     setState(null);
@@ -40,12 +87,14 @@ function Index() {
   function selectState(code: string | null) {
     setState(code);
     if (code) {
-      const info = stateInfo[code];
+      const info = states[code];
       if (info) setRegion(info.region);
     }
   }
+  const dash = <span aria-label="indisponível">—</span>;
+
   return (
-    <PageShell>
+    <PageShell simulated={simulated}>
       <div className="page-title-row">
         <div>
           <div className="eyebrow">
@@ -57,24 +106,58 @@ function Index() {
         <div className="election-badge">
           <Vote size={18} />
           <span>
-            Presidente da República<small>1º turno · cenário demonstrativo</small>
+            Presidente da República
+            <small>
+              {round}º turno · {simulated ? "cenário demonstrativo" : "fonte: TSE"}
+            </small>
           </span>
         </div>
       </div>
-      <section className="stats-band" aria-label="Resumo ilustrativo da apuração">
+      {elections.length > 1 && (
+        <div className="region-filter" role="group" aria-label="Selecionar turno">
+          {elections.map((e) => (
+            <Button
+              key={e.round}
+              variant="ghost"
+              className={`region-option ${round === e.round ? "active" : ""}`}
+              aria-pressed={round === e.round}
+              onClick={() => setRound(e.round)}
+            >
+              {e.round}º turno
+            </Button>
+          ))}
+        </div>
+      )}
+      <section className="stats-band" aria-label="Resumo da apuração" aria-busy={query.isFetching}>
         <div className="stat-block">
           <span className="stat-icon">
             <CheckCheck />
           </span>
           <div>
             <p>
-              Urnas apuradas <span className="illustrative-label">ILUSTRATIVO</span>
+              Seções totalizadas
+              {simulated && <span className="illustrative-label">ILUSTRATIVO</span>}
             </p>
             <strong>
-              87,42<span>%</span>
+              {result?.pollsCountedPercent !== undefined ? (
+                <>
+                  {formatPercent(result.pollsCountedPercent)}
+                  <span>%</span>
+                </>
+              ) : simulated ? (
+                <>
+                  87,42<span>%</span>
+                </>
+              ) : (
+                dash
+              )}
             </strong>
             <div className="stat-progress">
-              <i />
+              <i
+                style={{
+                  width: `${result?.pollsCountedPercent ?? (simulated ? 87.42 : 0)}%`,
+                }}
+              />
             </div>
           </div>
         </div>
@@ -83,9 +166,11 @@ function Index() {
             <Vote />
           </span>
           <div>
-            <p>Votos contabilizados</p>
-            <strong>{formatNumber(result.total)}</strong>
-            <small>{result.label} · dados fictícios</small>
+            <p>Votos válidos</p>
+            <strong>{result ? formatNumber(result.total) : dash}</strong>
+            <small>
+              {label} · {simulated ? "dados fictícios" : "TSE"}
+            </small>
           </div>
         </div>
         <div className="stat-block">
@@ -93,11 +178,26 @@ function Index() {
             <Clock3 />
           </span>
           <div>
-            <p>Horário ilustrativo</p>
+            <p>{simulated ? "Horário ilustrativo" : "Totalização informada pelo TSE"}</p>
             <strong>
-              20:45<span className="time-zone"> BRT</span>
+              {simulated ? (
+                <>
+                  20:45<span className="time-zone"> BRT</span>
+                </>
+              ) : result?.updatedAt ? (
+                <>
+                  {formatUpdated(result.updatedAt)}
+                  <span className="time-zone"> BRT</span>
+                </>
+              ) : (
+                dash
+              )}
             </strong>
-            <small>Exemplo estático · sem atualização automática</small>
+            <small>
+              {simulated
+                ? "Exemplo estático · sem atualização automática"
+                : "Consulta feita ao abrir a página"}
+            </small>
           </div>
         </div>
       </section>
@@ -108,7 +208,7 @@ function Index() {
         </h2>
         <span>
           Brasil <ChevronRight size={13} />
-          {state ? result.label : (region ?? "Todas as regiões")}
+          {state ? label : (region ?? "Todas as regiões")}
         </span>
       </div>
       <RegionFilter value={region} onChange={selectRegion} />
@@ -127,7 +227,7 @@ function Index() {
                 onChange={(e) => selectState(e.target.value || null)}
               >
                 <option value="">Todos os estados</option>
-                {Object.entries(stateInfo)
+                {Object.entries(states)
                   .filter(([, s]) => !region || s.region === region)
                   .sort((a, b) => a[1].name.localeCompare(b[1].name, "pt-BR"))
                   .map(([code, s]) => (
@@ -148,23 +248,55 @@ function Index() {
           <div className="section-heading">
             <div>
               <h2>
-                Candidatos <span className="count-badge">4</span>
+                Candidatos{" "}
+                {result && <span className="count-badge">{result.candidates.length}</span>}
               </h2>
-              <p>{result.label} · votos válidos fictícios</p>
+              <p>
+                {label} · {simulated ? "votos válidos fictícios" : "votos válidos · TSE"}
+              </p>
             </div>
             <span className="candidate-sort">
               <ArrowDown size={13} />
               Mais votados
             </span>
           </div>
-          <div className="candidate-list">
-            {[...result.candidates]
-              .sort((a, b) => b.percent - a.percent)
-              .map((c, i) => (
+          {query.isPending ? (
+            <div className="results-state" role="status">
+              <Loader2 className="spin" size={22} />
+              <p>Carregando resultados {simulated ? "de demonstração" : "do TSE"}…</p>
+            </div>
+          ) : query.isError ? (
+            <div className="results-state results-error" role="alert">
+              <AlertTriangle size={22} />
+              <p>
+                {query.error instanceof TseUnavailableError
+                  ? query.error.message
+                  : "Não foi possível carregar os resultados."}{" "}
+                Nenhum número foi exibido no lugar.
+              </p>
+              <Button variant="outline" size="sm" onClick={() => query.refetch()}>
+                <RefreshCw /> Tentar novamente
+              </Button>
+            </div>
+          ) : !result ? (
+            <div className="results-state" role="status">
+              <Inbox size={22} />
+              <p>
+                O TSE ainda não publicou resultados do {round}º turno para {label}.
+              </p>
+            </div>
+          ) : (
+            <div className="candidate-list">
+              {result.candidates.map((c, i) => (
                 <CandidateCard key={c.id} candidate={c} rank={i + 1} />
               ))}
-          </div>
-          <p className="candidate-disclaimer">Nomes, partidos e retratos são fictícios.</p>
+            </div>
+          )}
+          <p className="candidate-disclaimer">
+            {simulated
+              ? "Nomes, partidos e retratos são fictícios."
+              : "Dados lidos dos arquivos públicos do TSE. Confira sempre em resultados.tse.jus.br."}
+          </p>
         </section>
       </div>
       <div className="lower-grid">
